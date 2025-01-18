@@ -7,6 +7,9 @@ def calculate_ratios(ticker_symbol):
     balance_sheet = ticker.balance_sheet
     info = ticker.info
 
+    if financials.empty or balance_sheet.empty:
+        return False
+
     # Ensure we're accessing scalar values, not Series
     operating_income = financials.loc['Operating Income'].values[0]  # Ensure scalar value
     total_revenue = financials.loc['Total Revenue'].values[0]  # Ensure scalar value

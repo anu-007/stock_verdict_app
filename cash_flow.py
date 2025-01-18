@@ -6,6 +6,9 @@ def analyze_cash_flow(ticker_symbol):
         # fetch data
         ticker = yf.Ticker(ticker_symbol)
         cash_flow = ticker.cashflow
+        
+        if cash_flow.empty:
+            return False
 
         if cash_flow.empty:
             print(f"No cash flow data for {ticker_symbol}")

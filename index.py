@@ -39,7 +39,16 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                 # get ratios
                 ratios = calculate_ratios(formatted_stock)
-                print(ratios)
+
+                # Not found case
+                if cash_flow_analysis == False or ratios == False:
+                    response_html = f"404: Stock {stock_name} not found"
+                    self.send_response(404)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(response_html.encode('utf-8'))
+                    return
+
                 verdict_ratios = stock_verdict(ratios)
 
                 # Logic to combine verdicts (simple majority-based decision)
@@ -71,7 +80,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                         verdict=final_verdict
                     )
             except Exception as e:
-                print(e)
                 response_html = f"Error: {str(e)}"
 
             # send response
