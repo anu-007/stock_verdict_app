@@ -33,15 +33,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             stock_name = parsed_data['stock_name'][0]
             formatted_stock = stock_name.upper() + '.NS'
 
-            try:                
-                # get cash flow analysis
-                cash_flow_analysis = analyze_cash_flow(formatted_stock)
+            try:
+                # fetch data
+                ticker = yf.Ticker(formatted_stock)
+                cash_flow = ticker.get_cashflow(None, True)
+                financials = ticker.get_financials(None, True)
+                balance_sheet = ticker.get_balance_sheet(None, True)
+                info = ticker.get_info()
 
-                # get ratios
-                ratios = calculate_ratios(formatted_stock)
-
-                # Not found case
-                if cash_flow_analysis == False or ratios == False:
+                if ticker.cash_flow.empty or ticker.financials.empty or ticker.balance_sheet.empty:
                     response_html = f"404: Stock {stock_name} not found"
                     self.send_response(404)
                     self.send_header('Content-type', 'text/html')
@@ -49,6 +49,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self.wfile.write(response_html.encode('utf-8'))
                     return
 
+                # get cash flow analysis
+                cash_flow_analysis = analyze_cash_flow(cash_flow)
+
+                # get ratios
+                ratios = calculate_ratios(financials, balance_sheet, info)
+
+                # get stock verdict
                 verdict_ratios = stock_verdict(ratios)
 
                 # Logic to combine verdicts (simple majority-based decision)
@@ -58,6 +65,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                     final_verdict = "Sell"
                 else:
                     final_verdict = "Hold"
+
+                bot_verdict = ticker.get_recommendations(None, True)
 
                 # Read and render the analysis template
                 with open('templates/analysis.html', 'r') as file:
@@ -77,7 +86,12 @@ class RequestHandler(BaseHTTPRequestHandler):
                         price_to_sales_ratio=ratios["price_to_sales_ratio"],
                         price_to_bookvalue_ratio=ratios["price_to_bookvalue_ratio"],
                         price_to_earning_ratio=ratios["price_to_earning_ratio"],
-                        verdict=final_verdict
+                        verdict=final_verdict,
+                        analyst_verdict_strong_buy=bot_verdict['strongBuy'][0],
+                        analyst_verdict_buy=bot_verdict['buy'][0],
+                        analyst_verdict_hold=bot_verdict['hold'][0],
+                        analyst_verdict_sell=bot_verdict['sell'][0],
+                        analyst_verdict_strongSell=bot_verdict['strongSell'][0]
                     )
             except Exception as e:
                 response_html = f"Error: {str(e)}"

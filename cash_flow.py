@@ -1,23 +1,12 @@
-import yfinance as yf
-
-def analyze_cash_flow(ticker_symbol):
-
+def analyze_cash_flow(cash_flow):
     try:
-        # fetch data
-        ticker = yf.Ticker(ticker_symbol)
-        cash_flow = ticker.cashflow
-        
-        if cash_flow.empty:
-            return False
+        latest_timestamp = max(cash_flow.keys())
+        latest_data = cash_flow[latest_timestamp]
 
-        if cash_flow.empty:
-            print(f"No cash flow data for {ticker_symbol}")
-            return None
-
-        ocf = cash_flow.loc["Operating Cash Flow"].values[0]
-        icf = cash_flow.loc["Investing Cash Flow"].values[0]
-        fcf = cash_flow.loc["Financing Cash Flow"].values[0]
-        capex = cash_flow.loc["Capital Expenditure"].values[0]
+        ocf = latest_data.get("OperatingCashFlow")
+        icf = latest_data.get("InvestingCashFlow")
+        fcf = latest_data.get("FinancingCashFlow")
+        capex = latest_data.get("CapitalExpenditure")
         free_cash_flow = ocf - capex
     except Exception as e:
         print(f"Error fetching cash flow for {ticker_symbol}: {e}")

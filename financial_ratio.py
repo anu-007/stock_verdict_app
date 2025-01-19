@@ -1,28 +1,22 @@
-import yfinance as yf
-
-def calculate_ratios(ticker_symbol):
-    # fetch data
-    ticker = yf.Ticker(ticker_symbol)
-    financials = ticker.financials
-    balance_sheet = ticker.balance_sheet
-    info = ticker.info
-
-    if financials.empty or balance_sheet.empty:
-        return False
+def calculate_ratios(financials, balance_sheet, info):
+    financials_latest_timestamp = max(financials.keys())
+    balance_sheet_latest_timestamp = max(balance_sheet.keys())
+    financials_data = financials[financials_latest_timestamp]
+    balance_sheet_data = balance_sheet[balance_sheet_latest_timestamp]
 
     # Ensure we're accessing scalar values, not Series
-    operating_income = financials.loc['Operating Income'].values[0]  # Ensure scalar value
-    total_revenue = financials.loc['Total Revenue'].values[0]  # Ensure scalar value
-    net_income = financials.loc['Net Income'].values[0]  # Ensure scalar value
-    ebit = financials.loc['EBIT'].values[0]  # Ensure scalar value
-    interest_expense = financials.loc['Interest Expense'].values[0]  # Ensure scalar value
-    total_debt = balance_sheet.loc['Total Debt'].values[0]  # Ensure scalar value
-    equity = balance_sheet.loc['Share Issued'].values[0]  # Ensure scalar value
-    sales = financials.loc['Total Revenue'].values[0]  # Ensure scalar value
-    price_per_share = info['currentPrice']  # Ensure scalar value
-    shares_outstanding = info['sharesOutstanding']  # Ensure scalar value
-    book_value_per_share = equity / shares_outstanding  # Scalar value calculation
-    pe_ratio = info['trailingPE']  # Ensure scalar value
+    operating_income = financials_data.get('OperatingIncome')
+    total_revenue = financials_data.get('TotalRevenue')
+    net_income = financials_data.get('NetIncome')
+    ebit = financials_data.get('EBIT')
+    interest_expense = financials_data.get('InterestExpense')
+    total_debt = balance_sheet_data.get('TotalDebt')
+    equity = balance_sheet_data.get('ShareIssued')
+    sales = financials_data.get('TotalRevenue')
+    price_per_share = info.get('currentPrice')
+    shares_outstanding = info.get('sharesOutstanding')
+    book_value_per_share = equity / shares_outstanding
+    pe_ratio = info.get('trailingPE')
     
     # Calculate ratios
     operating_margin = operating_income / total_revenue * 100
@@ -30,7 +24,7 @@ def calculate_ratios(ticker_symbol):
     roe = net_income / equity * 100
     interest_coverage = ebit / interest_expense
     debt_to_equity = total_debt / equity
-    p_s_ratio = info['marketCap'] / sales
+    p_s_ratio = info.get('marketCap') / sales
     p_b_ratio = price_per_share / book_value_per_share
     
     return {
