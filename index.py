@@ -4,7 +4,7 @@ import yfinance as yf
 from cash_flow import analyze_cash_flow
 from financial_ratio import calculate_ratios, stock_verdict
 
-class RequestHandler(BaseHTTPRequestHandler):
+class RequestHandler(BaseHTTPRequestHandler):    
     def do_GET(self):
         if self.path == '/':
             self.path = '/index.html'
@@ -36,24 +36,41 @@ class RequestHandler(BaseHTTPRequestHandler):
             try:
                 # fetch data
                 ticker = yf.Ticker(formatted_stock)
-                cash_flow = ticker.get_cashflow(None, True)
-                financials = ticker.get_financials(None, True)
-                balance_sheet = ticker.get_balance_sheet(None, True)
-                info = ticker.get_info()
 
-                if ticker.cash_flow.empty or ticker.financials.empty or ticker.balance_sheet.empty:
-                    response_html = f"404: Stock {stock_name} not found"
-                    self.send_response(404)
+                if ticker == None or ticker.cash_flow.empty:
+                    with open('index.html', 'r') as file:
+                        template = file.read()
+                        response_html = template.format(
+                            message = f"404: Stock {stock_name} not found"
+                        )
+                    self.send_response(200)
                     self.send_header('Content-type', 'text/html')
                     self.end_headers()
                     self.wfile.write(response_html.encode('utf-8'))
                     return
+
+                cash_flow = ticker.get_cashflow(None, True)
+                financials = ticker.get_financials(None, True)
+                balance_sheet = ticker.get_balance_sheet(None, True)
+                info = ticker.get_info()
 
                 # get cash flow analysis
                 cash_flow_analysis = analyze_cash_flow(cash_flow)
 
                 # get ratios
                 ratios = calculate_ratios(financials, balance_sheet, info)
+
+                if cash_flow_analysis == False or ratios == False:
+                    with open('index.html', 'r') as file:
+                        template = file.read()
+                        response_html = template.format(
+                            message = f"Not enough data present for {stock_name}"
+                        )
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(response_html.encode('utf-8'))
+                    return
 
                 # get stock verdict
                 verdict_ratios = stock_verdict(ratios)

@@ -18,6 +18,10 @@ def calculate_ratios(financials, balance_sheet, info):
     book_value_per_share = equity / shares_outstanding
     pe_ratio = info.get('trailingPE')
     
+    if operating_income == None or total_revenue == None or net_income == None or ebit == None or interest_expense == None or total_debt == None or equity == None or sales == None or price_per_share == None or shares_outstanding == None or book_value_per_share == None or pe_ratio == None:
+        return False
+
+
     # Calculate ratios
     operating_margin = operating_income / total_revenue * 100
     pat_margin = net_income / total_revenue * 100

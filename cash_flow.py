@@ -7,6 +7,10 @@ def analyze_cash_flow(cash_flow):
         icf = latest_data.get("InvestingCashFlow")
         fcf = latest_data.get("FinancingCashFlow")
         capex = latest_data.get("CapitalExpenditure")
+
+        if ocf == None or icf == None or fcf == None or capex == None:
+            return False
+
         free_cash_flow = ocf - capex
     except Exception as e:
         print(f"Error fetching cash flow for {ticker_symbol}: {e}")

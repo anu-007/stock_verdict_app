@@ -5,34 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Indian Stock Investment Guide</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        input {
-            padding: 10px;
-            font-size: 16px;
-            width: 300px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
-<body>
+<body style="font-family: Arial, sans-serif;text-align: center;margin-top: 50px;">
     <h1>Indian Stock Investment Guide</h1>
     <p>Enter a stock code name, and we will check the financials of the stock and provide verdict.</p>
+    <p>{message}</p>
     <form action="/process_stock" method="POST">
-        <input type="text" name="stock_name" id="stockInput" placeholder="Enter stock code..." required>
-        <button type="submit">Submit</button>
+        <input type="text" name="stock_name" id="stockInput" placeholder="Enter stock code..."
+            style="padding: 10px;font-size: 16px;width: 300px;" required>
+        <button type="submit"
+            style="padding: 10px 20px;font-size: 16px;margin-left: 10px;cursor: pointer;">Submit</button>
     </form>
 </body>
 
