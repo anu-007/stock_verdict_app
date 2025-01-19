@@ -28,6 +28,7 @@ requests==2.32.3
 six==1.17.0
 soupsieve==2.6
 stack-data==0.6.3
+supervisor==4.2.5
 traitlets==5.14.3
 typing_extensions==4.12.2
 tzdata==2024.2
