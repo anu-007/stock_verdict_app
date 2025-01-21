@@ -104,11 +104,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                         price_to_bookvalue_ratio=ratios["price_to_bookvalue_ratio"],
                         price_to_earning_ratio=ratios["price_to_earning_ratio"],
                         verdict=final_verdict,
-                        analyst_verdict_strong_buy=bot_verdict['strongBuy'][0],
-                        analyst_verdict_buy=bot_verdict['buy'][0],
-                        analyst_verdict_hold=bot_verdict['hold'][0],
-                        analyst_verdict_sell=bot_verdict['sell'][0],
-                        analyst_verdict_strongSell=bot_verdict['strongSell'][0]
+                        analyst_verdict_strong_buy=bot_verdict.get("strongBuy", [None])[0],
+                        analyst_verdict_buy=bot_verdict.get("buy", [None])[0],
+                        analyst_verdict_hold=bot_verdict.get("hold", [None])[0],
+                        analyst_verdict_sell=bot_verdict.get("sell", [None])[0],
+                        analyst_verdict_strongSell=bot_verdict.get("strongSell", [None])[0]
                     )
             except Exception as e:
                 response_html = f"Error: {str(e)}"
