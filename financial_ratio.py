@@ -11,7 +11,7 @@ def calculate_ratios(financials, balance_sheet, info):
     ebit = financials_data.get('EBIT')
     interest_expense = financials_data.get('InterestExpense')
     total_debt = balance_sheet_data.get('TotalDebt')
-    equity = balance_sheet_data.get('ShareIssued')
+    equity = balance_sheet_data.get('StockholdersEquity')
     sales = financials_data.get('TotalRevenue')
     price_per_share = info.get('currentPrice')
     shares_outstanding = info.get('sharesOutstanding')
@@ -56,7 +56,7 @@ def stock_verdict(ratios):
     else:
         verdict["Sell"] += 1
         
-    if ratios["return_on_equity"] > 25:
+    if ratios["return_on_equity"] > 20:
         verdict["Buy"] += 1
     else:
         verdict["Sell"] += 1
@@ -85,7 +85,7 @@ def stock_verdict(ratios):
         verdict["Buy"] += 1
     else:
         verdict["Sell"] += 1
-        
+    
     # Final verdict
     if verdict["Buy"] > verdict["Sell"]:
         return "Buy"

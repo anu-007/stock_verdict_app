@@ -53,10 +53,10 @@ def analyze_cash_flow(cash_flow):
     
     # Return detailed results
     return {
-        "operating_cash_flow": ocf,
-        "investing_cash_flow": icf,
-        "financing_cash_flow": fcf,
-        "free_cash_flow": free_cash_flow,
+        "operating_cash_flow": ocf/10000000,
+        "investing_cash_flow": icf/10000000,
+        "financing_cash_flow": fcf/10000000,
+        "free_cash_flow": free_cash_flow/10000000,
         "score": score,
         "verdict": verdict
     }
